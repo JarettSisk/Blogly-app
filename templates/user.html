@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<img src="{{user.image_url}}" alt="profile picture" class="user-image">
+<p>{{user.first_name}} {{user.last_name}}</p>
+
+<button onclick="document.location='/users/{{user.id}}/edit'">Edit profile</button>
+<button onclick="document.location='/users/{{user.id}}/delete'">Delete profile</button>
+<br>
+<a href="/users" class="profile-buttons">Go back</a>
+{% endblock %}
