@@ -1,0 +1,10 @@
+
+{% block content %}
+<h1>Create New Post</h1>
+<form action="" method="POST">
+    <input type="text" name="title-input" placeholder="Title of your post" required>
+    <textarea name="content-input" placeholder="Content for your post" rows="5" cols="50" required style="resize: none;"></textarea>
+    <button type="button" onclick="document.location='/users/{{user.id}}'">CANCEL</button>
+    <button type="submit">SAVE</button>
+</form>
+{% endblock %}
