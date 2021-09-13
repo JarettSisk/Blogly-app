@@ -4,10 +4,20 @@
 {% block content %}
 <h1>Create New User</h1>
 <form action="" method="POST">
+    <label for="first-name-input">First Name</label>
+    <br>
     <input type="text" name="first-name-input" placeholder="first name" required>
+    <br>
+    <label for="last-name-input">Last Name</label>
+    <br>
     <input type="text" name="last-name-input" placeholder="last name" >
+    <br>
+    <label for="image-url-input">Image url for profile picture</label>
+    <br>
     <input type="url" name="image-url-input" placeholder="image url" required>
-    <button type="button" onclick="document.location='/users'">CANCEL</button>
+    <br>
+    <br>
+    <button class="red-button" type="button" onclick="document.location='/users'">CANCEL</button>
     <button type="submit">ADD</button>
 </form>
 {% endblock %}

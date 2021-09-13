@@ -4,13 +4,17 @@
 {% block content %}
 <h1 class="post-title">{{post.title}}</h1>
 <p class="post-content">{{post.content}}</p>
-
 <p class="author"><i>By {{post.user.first_name}} {{post.user.last_name}}</i></p>
-
-<button onclick="document.location='/posts/{{post.id}}/delete'">Delete post</button>
-<button onclick="document.location='/posts/{{post.id}}/edit'">Edit post</button>
+{% for tag in tags %}
+<button class="tag-button" onclick="document.location='/tags/{{tag.id}}'">{{tag.name}}</button>
+{% endfor %}
 
 <br>
-<a href="/users/{{post.user_id}}" class="profile-buttons">Back</a>
+<br>
+<button class="red-button" onclick="document.location='/posts/{{post.id}}/delete'">Delete post</button>
+<button onclick="document.location='/posts/{{post.id}}/edit'">Edit post</button>
+<br>
+<br>
+<a href="/users/{{post.user_id}}" class="profile-buttons">All Posts</a>
 
 {% endblock %}

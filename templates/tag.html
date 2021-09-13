@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1 class="tag-name">#{{tag.name}}</h1>
+
+<button class="red-button" onclick="document.location='/tags/{{tag.id}}/delete'">Delete teg</button>
+<button onclick="document.location='/tags/{{tag.id}}/edit'">Edit tag</button>
+<br>
+<br>
+<a href="/tags" class="profile-buttons">Back</a>
+
+<h2>Related Posts</h2>
+{% for post in posts %}
+    <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
+{% endfor %}
+
+{% endblock %}

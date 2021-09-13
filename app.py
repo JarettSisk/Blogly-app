@@ -3,7 +3,7 @@
 # Imports
 from flask import Flask, request, render_template, redirect, flash, session, abort
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 from datetime import datetime
 
 app = Flask(__name__)
@@ -27,8 +27,9 @@ def redirect_to_users_list():
 @app.route('/users')
 def list_users():
     """Shows list of all users in the database"""
-    USERS = User.query.all();
-    return render_template('users.html', users=USERS)
+    USERS = User.query.all()
+    TAGS = Tag.query.all()
+    return render_template('users.html', users=USERS, tags=TAGS)
 
 @app.route('/users/new', methods=['GET', 'POST'])
 def creat_new_user():
@@ -83,39 +84,38 @@ def edit_user(user_id):
 def delete_user(user_id):
     """Delete the user"""
     userid = int(user_id)
-    # Deleting all the posts from that user
-    POSTS = Post.query.filter(Post.user_id == userid).delete()
-    if POSTS != 0:
-        db.session.commit()
+    
 
     # Deleting the user
-    user = User.query.filter(User.id == userid).delete()
-    if user != 0:
-        db.session.commit()
-        return redirect('/users')
-    else:
-        abort(404, f"Could not delete the user with the id of {userid}")
+    user = User.query.get_or_404(userid)
+    db.session.delete(user)
+    db.session.commit()
+    return redirect('/users')
 
 # Routes for user posts
 @app.route('/posts/<post_id>')
 def view_post(post_id):
     postid = int(post_id)
-
     POST = Post.query.get_or_404(postid)
-    return render_template('post.html', post=POST)
+    TAGS = POST.tags
+    return render_template('post.html', post=POST, tags=TAGS)
 
 @app.route('/posts/<post_id>/delete')
 def delete_post(post_id):
     """Delete a post"""
     postid = int(post_id)
-    POST = Post.query.get(postid)
+    POST = Post.query.get_or_404(postid)
     # Checking that post exists
-    match = Post.query.filter(Post.id == postid).delete()
-    if match != 0 and POST != 0:
-        db.session.commit()
-        return redirect(f'/users/{POST.user_id}')
-    else:
-        abort(404, f"Could not delete the post with the id of {postid}")
+    # post_tags = PostTag.query.filter(PostTag.post_id == postid).delete()
+    
+
+    # match = Post.query.filter(Post.id == postid).delete()
+    # if match != 0 and POST != 0:
+    db.session.delete(POST)
+    db.session.commit()
+    return redirect(f'/users/{POST.user_id}')
+    # else:
+    #     abort(404, f"Could not delete the post with the id of {postid}")
 
 @app.route('/posts/<post_id>/edit', methods=['GET','POST'])
 def edit_post(post_id):
@@ -145,15 +145,88 @@ def creat_new_post(user_id):
     userid = int(user_id)
     # Get the user
     USER = User.query.get_or_404(userid)
+
+    # Get available tags
+    TAGS = Tag.query.all()
     if request.method == 'POST':
         
         title = request.form.get('title-input')
         content = request.form.get('content-input')
+        
 
-        new_post = Post(title = title, content = content, user_id = userid)
+        # Tags 
+        tag_ids = [int(num) for num in request.form.getlist("tag-checkboxes")]
+        tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+
+        new_post = Post(title = title, content = content, user_id = userid, tags=tags)
+
         db.session.add(new_post)
         db.session.commit()
 
         return redirect(f'/users/{userid}')
     elif request.method == "GET":
-        return render_template('new-post.html', user=USER)
+        return render_template('new-post.html', user=USER, tags=TAGS)
+
+# Routes for tags
+@app.route('/tags')
+def get_tags_list():
+    """Fetch all the tags from the db"""
+    TAGS = Tag.query.all()
+    return render_template('tags.html', tags=TAGS)
+
+@app.route('/tags/<tag_id>')
+def get_tag_info(tag_id):
+    """Get tag with the matching id and get posts that use the tag"""
+
+    # Convert to int
+    tagid = int(tag_id)
+    # Get the tag instance
+    TAG = Tag.query.get(tagid)
+    # Get the posts that use the tag
+    POSTS = TAG.posts
+    return render_template('tag.html', tag=TAG, posts=POSTS)
+
+@app.route('/tags/new', methods=['GET', 'POST'])
+def create_new_tag():
+    if request.method == 'POST':
+        
+        name = request.form.get('name-input')
+
+        new_tag = Tag(name=name)
+        db.session.add(new_tag)
+        db.session.commit()
+
+        return redirect(f'/tags')
+    elif request.method == "GET":
+        TAGS = Tag.query.all()
+        return render_template('new-tag.html', tags=TAGS)
+
+@app.route('/tags/<tag_id>/edit', methods=['GET','POST'])
+def edit_tag(tag_id):
+    """Edit a tag"""
+    # Converting path variable to type integer
+    tagid = int(tag_id)
+    # Getting back the correct user based on user_id\
+    TAG = Tag.query.get_or_404(tagid)
+
+    if request.method == 'POST':
+        
+        name = request.form.get('name-input')
+
+        TAG.name = name
+        db.session.commit()
+        return redirect(f'/tags/{tagid}')
+    elif request.method == "GET":
+        
+        return render_template('edit-tag.html', tag=TAG )
+
+@app.route('/tags/<tag_id>/delete')
+def delete_tag(tag_id):
+    """Delete a tag"""
+    tagid = int(tag_id)
+    TAG = Tag.query.get_or_404(tagid)
+    # match = Tag.query.filter(Tag.id == tagid).delete()
+    db.session.delete(TAG)
+    db.session.commit()
+    return redirect(f'/tags')
+

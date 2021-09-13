@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1>Tags</h1>
+<ul>
+    {% for tag in tags %}
+    <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+    {% endfor %}
+</ul>
+<button onclick="document.location='/tags/new'">ADD TAG</button>
+<br>
+<br>
+<a href="/users" class="profile-buttons">All Users</a>
+{% endblock %}

@@ -5,12 +5,10 @@
 <img src="{{user.image_url}}" alt="profile picture" class="user-image">
 <h2>{{user.first_name}} {{user.last_name}}</h2>
 
-<button onclick="document.location='/users/{{user.id}}/delete'">Delete profile</button>
+<button class="red-button" onclick="document.location='/users/{{user.id}}/delete'">Delete profile</button>
 <button onclick="document.location='/users/{{user.id}}/edit'">Edit profile</button>
-
 <br>
-<a href="/users" class="profile-buttons">All Users</a>
-<h2>Posts</h2>
+<h2>My Posts</h2>
 <ul>
     {% for post in posts %}
     <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
@@ -18,4 +16,8 @@
 </ul>
 
 <button onclick="document.location='/users/{{user.id}}/posts/new'">Add Post</button>
+<br>
+<br>
+<a href="/users" class="profile-buttons">All Users</a>
+
 {% endblock %}

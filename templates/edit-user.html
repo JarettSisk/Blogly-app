@@ -4,10 +4,20 @@
 {% block content %}
 <h1>Edit User</h1>
 <form action="" method="POST">
+    <label for="first-name-input">First Name</label>
+    <br>
     <input type="text" name="first-name-input" placeholder="{{user.first_name}}" required>
+    <br>
+    <label for="last-name-input">Last Name</label>
+    <br>
     <input type="text" name="last-name-input" placeholder="{{user.last_name}}">
+    <br>
+    <label for="image-url-input">Url for profile image</label>
+    <br>
     <input type="url" name="image-url-input" placeholder="image url" required>
-    <button type="button" onclick="document.location='/users/{{user.id}}'">CANCEL</button>
+    <br>
+    <br>
+    <button class="red-button" type="button" onclick="document.location='/users/{{user.id}}'">CANCEL</button>
     <button type="submit">SAVE</button>
 </form>
 {% endblock %}

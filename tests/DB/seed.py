@@ -2,7 +2,7 @@
 import sys
 sys.path.append('../../')
 
-from models import User, Post, db
+from models import User, Post, Tag, PostTag, db
 from app import app
 
 # Create all tables
@@ -16,8 +16,20 @@ db.session.commit()
 
 post1 = Post(title='Test post 1', content='Hey there, this is a test post', user_id=1)
 post2 = Post(title='Test post 2', content='Hey there, this is a test post', user_id=1)
-post3 = Post(title='Test post 3', content='Hey there, this is a test post', user_id=2)
-post4 = Post(title='Test post 4', content='Hey there, this is a test post', user_id=2)
-db.session.add_all([post1, post2, post3, post4])
+db.session.add_all([post1, post2])
 db.session.commit()
+
+tag1 = Tag(name="comedy")
+tag2 = Tag(name="news")
+db.session.add_all([tag1, tag2])
+db.session.commit()
+
+
+post_tag1 = PostTag(post_id=1, tag_id=1)
+post_tag2 = PostTag(post_id=2, tag_id=1)
+post_tag3 = PostTag(post_id=2, tag_id=2)
+
+db.session.add_all([post_tag1, post_tag2, post_tag3])
+db.session.commit()
+
 
